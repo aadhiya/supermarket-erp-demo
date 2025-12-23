@@ -1,4 +1,4 @@
-using Backend.Data;
+﻿using Backend.Data;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +25,9 @@ app.UseCors();
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<SeedData>();
+    db.Database.EnsureCreated();  // ← CREATE TABLES!
+    var seeder = scope.ServiceProvider.GetRequiredService<SeedData>();
+
     await seeder.SeedAsync();
 }
 
