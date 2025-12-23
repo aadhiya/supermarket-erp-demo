@@ -42,7 +42,7 @@ app.MapGet("/api/inventory", async (AppDbContext db) =>
 {
     var products = await db.Products.ToListAsync();
     var lowStock = products.Where(p => p.Stock < 20).ToList();
-    return new { All = products.Take(20), LowStock };
+    return new { All = products.Take(20), lowStock };
 });
 
 app.MapPost("/pos/sale", async (Sale sale, AppDbContext db) =>
