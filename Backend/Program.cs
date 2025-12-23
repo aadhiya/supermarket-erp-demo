@@ -25,7 +25,7 @@ app.UseCors();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();  // ← FIXED: dbContext
-    db.Database.EnsureCreated();  // ← CREATE TABLES!
+    dbContext.Database.EnsureCreated();  // ← CREATE TABLES!
     var seeder = scope.ServiceProvider.GetRequiredService<SeedData>();
 
     await seeder.SeedAsync();
