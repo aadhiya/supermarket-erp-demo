@@ -30,7 +30,7 @@ public class SeedData
         var products = new Dictionary<string, Product>();
         foreach (var record in records)
         {
-            var productCode = record.Product_line?.ToString() ?? "MISC";
+            var productCode = record.GetType().GetProperty("Product line")?.GetValue(record)?.ToString() ?? "MISC";
 
             // Declare variables FIRST
             decimal price = 0;
