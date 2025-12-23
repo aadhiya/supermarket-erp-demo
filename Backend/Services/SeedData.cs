@@ -2,10 +2,37 @@
 using Backend.Models;
 using CsvHelper;
 using System.Globalization;
-using System.Dynamic;
 using Microsoft.EntityFrameworkCore;
+using CsvHelper.Configuration;
 
 namespace Backend.Services;
+
+public class SupermarketRecord
+{
+    public string InvoiceID { get; set; } = "";
+    public string Branch { get; set; } = "";
+    public string ProductLine { get; set; } = "";      // ✅ Fixed
+    public decimal UnitPrice { get; set; }             // ✅ Fixed
+    public int Quantity { get; set; }
+    public decimal Total { get; set; }
+    public string Date { get; set; } = "";
+    public string Payment { get; set; } = "";
+}
+
+public class SupermarketRecordMap : ClassMap<SupermarketRecord>     // ✅ Outside class
+{
+    public SupermarketRecordMap()
+    {
+        Map(m => m.InvoiceID).Name("Invoice ID");
+        Map(m => m.Branch).Name("Branch");
+        Map(m => m.ProductLine).Name("Product line");         // ✅ Maps space header
+        Map(m => m.UnitPrice).Name("Unit price");             // ✅ Maps space header
+        Map(m => m.Quantity).Name("Quantity");
+        Map(m => m.Total).Name("Total");
+        Map(m => m.Date).Name("Date");
+        Map(m => m.Payment).Name("Payment");
+    }
+}
 
 public class SeedData
 {
@@ -25,21 +52,18 @@ public class SeedData
 
         using var reader = new StreamReader(csvPath);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-        var records = csv.GetRecords<dynamic>().Take(1000).ToList();
+        csv.Context.RegisterClassMap<SupermarketRecordMap>();
+        var records = csv.GetRecords<SupermarketRecord>().Take(500).ToList();
 
         var products = new Dictionary<string, Product>();
         foreach (var record in records)
         {
-            var productCode = record.GetType().GetProperty("Product line")?.GetValue(record)?.ToString() ?? "MISC";
+            var productCode = record.ProductLine ?? "MISC";     // ✅ Fixed property
 
-            // Declare variables FIRST
-            decimal price = 0;
-            int qty = 1;
-            decimal total = 0;
-
-            decimal.TryParse(record.Unitprice?.ToString(), out price);
-            int.TryParse(record.Quantity?.ToString(), out qty);
-            decimal.TryParse(record.Total?.ToString(), out total);
+            // ✅ DECLARE variables
+            decimal price = record.UnitPrice;                    // ✅ Fixed
+            int qty = record.Quantity;
+            decimal total = record.Total;
 
             if (!products.TryGetValue(productCode, out Product? product))
             {
@@ -48,7 +72,7 @@ public class SeedData
                     Code = productCode,
                     Name = productCode,
                     Category = productCode,
-                    Price = price,
+                    Price = price,                            // ✅ Use declared var
                     Stock = 100,
                     Cost = price * 0.7m
                 };
@@ -59,12 +83,12 @@ public class SeedData
             _context.Sales.Add(new Sale
             {
                 ProductCode = productCode,
-                Quantity = qty,
-                Total = total,
-                Branch = record.Branch?.ToString() ?? "Main"
+                Quantity = qty,                               // ✅ Use declared var
+                Total = total,                                // ✅ Use declared var
+                Branch = record.Branch ?? "Main"
             });
         }
 
-        await _context.SaveChangesAsync();  // ← CRITICAL: Save to database!
+        await _context.SaveChangesAsync();                    // ✅ INSIDE method!
     }
 }
