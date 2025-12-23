@@ -1,4 +1,4 @@
-using Backend.Data;
+﻿using Backend.Data;
 using Backend.Models;
 using CsvHelper;
 using System.Globalization;
@@ -31,6 +31,16 @@ public class SeedData
         foreach (var record in records)
         {
             var productCode = record.Product_line?.ToString() ?? "MISC";
+
+            // Declare variables FIRST
+            decimal price = 0;
+            int qty = 1;
+            decimal total = 0;
+
+            decimal.TryParse(record.Unitprice?.ToString(), out price);
+            int.TryParse(record.Quantity?.ToString(), out qty);
+            decimal.TryParse(record.Total?.ToString(), out total);
+
             if (!products.TryGetValue(productCode, out Product? product))
             {
                 product = new Product
@@ -38,9 +48,9 @@ public class SeedData
                     Code = productCode,
                     Name = productCode,
                     Category = productCode,
-                    Price = decimal.TryParse(record.Unitprice?.ToString(), out var price) ? price : 0,
+                    Price = price,
                     Stock = 100,
-                    Cost = 0
+                    Cost = price * 0.7m
                 };
                 products[productCode] = product;
                 _context.Products.Add(product);
@@ -49,12 +59,12 @@ public class SeedData
             _context.Sales.Add(new Sale
             {
                 ProductCode = productCode,
-                Quantity = int.TryParse(record.Quantity?.ToString(), out var qty) ? qty : 1,
-                Total = decimal.TryParse(record.Total?.ToString(), out var total) ? total : 0,
+                Quantity = qty,
+                Total = total,
                 Branch = record.Branch?.ToString() ?? "Main"
             });
         }
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();  // ← CRITICAL: Save to database!
     }
 }
