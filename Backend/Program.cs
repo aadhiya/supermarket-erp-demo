@@ -16,6 +16,15 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<SeedData>();
+// ← ADD CORS HERE (after AddDbContext, before AddScoped)
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 
 var app = builder.Build();
 
