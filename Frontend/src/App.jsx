@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import ProductListPage from './pages/ProductListPage.jsx';
 import CartPage from './pages/CartPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
 import './App.css';
 
 // ✅ DEFINE HOMEPAGE HERE:
@@ -66,11 +67,12 @@ const HomePage = () => {
 };
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
+    if (isLoading) return null;
     return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-const LoginPage = () => <div>Login Page (create later)</div>;  // ✅ TEMP
+//const LoginPage = () => <div>Login Page (create later)</div>;  // ✅ TEMP
 
 function App() {
     return (
