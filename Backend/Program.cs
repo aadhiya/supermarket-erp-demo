@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms.TimeSeries;
-
+using System.Text;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 //JWT CONFIG(appsettings.json first)
@@ -67,7 +70,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // APIs
-app.MapPost("/api/auth/login", async ([FromBody] LoginRequest req, AppDbContext db) =>
+/*app.MapPost("/api/auth/login", async ([FromBody] LoginRequest req, AppDbContext db) =>
 {
     var user = await db.Users.FirstOrDefaultAsync(u => u.Email == req.Email);
     if (user == null) return Results.Unauthorized();
@@ -92,6 +95,7 @@ app.MapPost("/api/auth/login", async ([FromBody] LoginRequest req, AppDbContext 
 
     return Results.Ok(new { accessToken = new JwtSecurityTokenHandler().WriteToken(token) });
 });
+*/
 app.MapGet("/api/products", async (AppDbContext db) =>
     await db.Products.Take(50).ToListAsync());
 
@@ -135,4 +139,4 @@ app.MapPost("/api/chat", async (HttpContext ctx, AppDbContext db) =>
 });
 
 app.Run();
-public record LoginRequest(string Email, string Password);
+//public record LoginRequest(string Email, string Password);
