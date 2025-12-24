@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const CartContext = createContext(null);
+const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState(() => {
@@ -8,11 +8,19 @@ export const CartProvider = ({ children }) => {
         return saved ? JSON.parse(saved) : [];
     });
 
+    //  Debounced save to localStorage (better performance)
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cart));
+        const timeoutId = setTimeout(() => {
+            try {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            } catch (e) {
+                console.warn('Failed to save cart to localStorage:', e);
+            }
+        }, 100);
+        return () => clearTimeout(timeoutId);
     }, [cart]);
 
-    const addItem = (product) => {
+    const addItem = useCallback((product) => {
         setCart(prev => {
             const existing = prev.find(p => p.id === product.id);
             if (existing) {
@@ -20,10 +28,39 @@ export const CartProvider = ({ children }) => {
             }
             return [...prev, { id: product.id, name: product.name, price: product.price, qty: 1 }];
         });
-    };
+    }, []);
+    // ✅ Additional cart functions for completeness
+    const removeItem = useCallback((id) => {
+        setCart(prev => prev.filter(item => item.id !== id));
+    }, []);
 
-    const value = { cart, setCart, addItem };
+    const updateQty = useCallback((id, qty) => {
+        setCart(prev =>
+            prev.map(item =>
+                item.id === id ? { ...item, qty: Math.max(1, qty) } : item
+            )
+        );
+    }, []);
+
+    const clearCart = useCallback(() => {
+        setCart([]);
+    }, []);
+
+    const value = {
+        cart,
+        setCart,
+        addItem,
+        removeItem,
+        updateQty,
+        clearCart
+    };
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => {
+    const context = useContext(CartContext);
+    if (!context) {
+        throw new Error('useCart must be used within CartProvider');
+    }
+    return context;
+};
