@@ -8,23 +8,7 @@ using Microsoft.ML.Transforms.TimeSeries;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-});
-
-builder.Services.AddDbContext<AppDbContext>();
-builder.Services.AddScoped<SeedData>();
-// ← ADD CORS HERE (after AddDbContext, before AddScoped)
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod());
-});
-
+//JWT CONFIG(appsettings.json first)
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
@@ -46,6 +30,26 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
 });
+/*
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
+*/
+builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddScoped<SeedData>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
+
 var app = builder.Build();
 
 app.UseCors();
@@ -63,6 +67,31 @@ using (var scope = app.Services.CreateScope())
 }
 
 // APIs
+app.MapPost("/api/auth/login", async ([FromBody] LoginRequest req, AppDbContext db) =>
+{
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == req.Email);
+    if (user == null) return Results.Unauthorized();
+
+    var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Role, "Customer"),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
+
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        issuer: "supermarket-api",
+        audience: "supermarket-web",
+        claims: claims,
+        expires: DateTime.UtcNow.AddMinutes(15),
+        signingCredentials: creds
+    );
+
+    return Results.Ok(new { accessToken = new JwtSecurityTokenHandler().WriteToken(token) });
+});
 app.MapGet("/api/products", async (AppDbContext db) =>
     await db.Products.Take(50).ToListAsync());
 
@@ -106,3 +135,4 @@ app.MapPost("/api/chat", async (HttpContext ctx, AppDbContext db) =>
 });
 
 app.Run();
+public record LoginRequest(string Email, string Password);
