@@ -1,6 +1,6 @@
 ﻿// Frontend/src/App.jsx - COMPLETE WORKING VERSION:
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import ProductListPage from './pages/ProductListPage.jsx';
@@ -74,14 +74,14 @@ const LoginPage = () => <div>Login Page (create later)</div>;  // ✅ TEMP
 
 function App() {
     return (
-        <BrowserRouter>
+        
             <Routes>
                 <Route path="/" element={<HomePage />} />           {/* ✅ NOW WORKS */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/products" element={<ProductListPage />} />
                 <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
             </Routes>
-        </BrowserRouter>
+        
     );
 }
 
