@@ -47,6 +47,10 @@ const ProductListPage = () => {
       return <Alert severity="error">Failed to load products: {error.message}</Alert>;
     }
    
+    // ✅ client-side filter by name
+    const filtered = products.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+    );
 
   return (
       <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
@@ -69,7 +73,7 @@ const ProductListPage = () => {
         size="small"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        sx={{ mb: 3 }}
+                  fullWidth
       />
       </Box>
       <Grid container spacing={2}>
