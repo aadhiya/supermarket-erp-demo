@@ -25,10 +25,32 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.RequireHttpsMetadata = false; // dev only
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = "supermarket-web",
+            ValidIssuer = "supermarket-api",
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "your-super-secret-key-min32chars-long!!!"))
+        };
+    });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
+});
 var app = builder.Build();
 
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Seed data
 using (var scope = app.Services.CreateScope())
