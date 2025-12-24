@@ -12,11 +12,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, Link } from 'react-router-dom';
 
 const CartPage = () => {
-    const { cart, setCart } = useCart();   // assumes CartContext exposes setCart
+    const { cart, removeItem, updateQty } = useCart();    
     const navigate = useNavigate();
 
-    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
+    const total = cart.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
+    /*
     const removeItem = (id) => {
         setCart(prev => prev.filter(item => item.id !== id));
     };
@@ -30,7 +30,7 @@ const CartPage = () => {
             )
         );
     };
-
+    */
     const handleCheckout = () => {
         // later: call backend /api/orders
         navigate('/checkout');
@@ -97,21 +97,21 @@ const CartPage = () => {
                 </Box>
             ))}
 
-            <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 3 }} />
 
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', textAlign: 'right' }}>
                 Total: QAR {total.toFixed(2)}
             </Typography>
-
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
-                variant="contained"
-                color="primary"
+                    variant="contained" size="large"
                 onClick={handleCheckout}
-                sx={{ mr: 2 }}
+               
             >
                 Proceed to Checkout
             </Button>
-            <Button component={Link} to="/products">Continue Shopping</Button>
+                <Button component={Link} to="/products" variant="outlined" size="large">Continue Shopping</Button>
+            </Box>
         </Box>
     );
 };
