@@ -79,7 +79,7 @@ public class SeedData
                 products[productCode] = product;
                 _context.Products.Add(product);
             }
-
+            
             _context.Sales.Add(new Sale
             {
                 ProductCode = productCode,
@@ -88,7 +88,16 @@ public class SeedData
                 Branch = record.Branch ?? "Main"
             });
         }
-
+        if (!_context.Users.Any(u => u.Email == "customer@test.com"))
+        {
+            _context.Users.Add(new User
+            {
+                Name = "Demo Customer",
+                Email = "customer@test.com"
+                // PasswordHash = null for now
+            });
+            await _context.SaveChangesAsync();
+        }
         await _context.SaveChangesAsync();                    // ✅ INSIDE method!
     }
 }
