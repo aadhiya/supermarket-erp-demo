@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
 import apiClient from '../api/client.js';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
@@ -15,8 +15,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('accessToken', res.data.accessToken);
       setAccessToken(res.data.accessToken);
       // Decode token to get user info (simple version)
-      const userInfo = JSON.parse(atob(res.data.accessToken.split('.')[1]));
-        setUser({ id: userInfo.sub || userInfo['nameid'] || userInfo.nameid, email: userInfo.email });
+        
+        const payload = JSON.parse(atob(res.data.accessToken.split('.')[1]));
+        const id = payload.sub || payload['nameid'] || payload.nameid;
+        const emailFromToken = payload.email;
+
+        setUser({ id, email: emailFromToken });
       return { success: true };
     } catch (error) {
       return { success: false, error: 'Invalid credentials' };
@@ -27,7 +31,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('accessToken');
     setAccessToken(null);
         setUser(null);
-        setIsLoading(false);
+        
   };
 
     //  Use useEffect to load token on app start
@@ -36,9 +40,16 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             setAccessToken(token);
             try {
-                const userInfo = JSON.parse(atob(token.split('.')[1]));
-                setUser({ id: userInfo.sub || userInfo['nameid'], email: userInfo.email });
-            } catch { }
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const id = payload.sub || payload['nameid'] || payload.nameid;
+                const emailFromToken = payload.email;
+                setUser({ id, email: emailFromToken });
+            } catch {
+                // bad token → clear
+                localStorage.removeItem('accessToken');
+                setAccessToken(null);
+                setUser(null);
+            }
         }
         setIsLoading(false);
     }, []);

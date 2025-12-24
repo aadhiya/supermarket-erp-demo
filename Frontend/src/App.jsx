@@ -6,11 +6,17 @@ import { useAuth } from './context/AuthContext.jsx';
 import ProductListPage from './pages/ProductListPage.jsx';
 import CartPage from './pages/CartPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 // ✅ DEFINE HOMEPAGE HERE:
 const HomePage = () => {
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated, user, logout } = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();
+        navigate('/login');   // or '/' if you prefer
+    };
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
@@ -54,6 +60,23 @@ const HomePage = () => {
                     }}>
                         🔐 Login
                     </Link>
+                )}
+                {isAuthenticated && (
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            display: 'inline-block',
+                            margin: '0.5rem',
+                            padding: '1rem 2rem',
+                            background: '#e53935',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        🚪 Logout
+                    </button>
                 )}
             </div>
 
