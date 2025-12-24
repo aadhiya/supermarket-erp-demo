@@ -9,7 +9,18 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+//using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// ✅ 1) Add MVC controllers + Swagger
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+/*builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Supermarket API", Version = "v1" });
+});*/
 
 //JWT CONFIG(appsettings.json first)
 builder.Services.AddAuthentication("Bearer")
@@ -55,6 +66,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// ✅ 2) Enable Swagger in Development
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+app.UseSwaggerUI();
+}
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -68,7 +86,8 @@ using (var scope = app.Services.CreateScope())
 
     await seeder.SeedAsync();
 }
-
+// ✅ 4) Map MVC controllers (AuthController, etc.)
+app.MapControllers();
 // APIs
 /*app.MapPost("/api/auth/login", async ([FromBody] LoginRequest req, AppDbContext db) =>
 {
