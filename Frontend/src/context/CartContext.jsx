@@ -33,12 +33,14 @@ export const CartProvider = ({ children }) => {
     const removeItem = useCallback((id) => {
         setCart(prev => prev.filter(item => item.id !== id));
     }, []);
-
-    const updateQty = useCallback((id, qty) => {
+    const updateQty = useCallback((id, delta) => {
         setCart(prev =>
-            prev.map(item =>
-                item.id === id ? { ...item, qty: Math.max(1, qty) } : item
-            )
+            prev
+                .map(item =>
+                    item.id === id
+                        ? { ...item, qty: Math.max(1, item.qty + delta) } // ✅ use delta
+                        : item
+                )
         );
     }, []);
 
