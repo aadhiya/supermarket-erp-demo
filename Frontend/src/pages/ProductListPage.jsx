@@ -19,15 +19,15 @@ const API_BASE = 'http://localhost:5261'; // your backend URL/port
 
 const fetchProducts = async (category) => {
   const res = await axios.get(`${API_BASE}/api/products`, {
-    params: { category },
+      params: { category: category || undefined },
   });
   return res.data;
 };
 
 const ProductListPage = () => {
   const [category, setCategory] = useState('');
-
-  const { data: products, isLoading, error } = useQuery({
+    const { addItem } = useCart();
+    const { data: products = [], isLoading, error } = useQuery({
     queryKey: ['products', category],
     queryFn: () => fetchProducts(category),
   });
@@ -41,9 +41,9 @@ const ProductListPage = () => {
   }
 
   if (error) {
-    return <Alert severity="error">Failed to load products.</Alert>;
+      return <Alert severity="error">Failed to load products: {error.message}</Alert>;
     }
-    const { addItem } = useCart();
+   
 
   return (
     <Box>
@@ -59,19 +59,19 @@ const ProductListPage = () => {
 
       <Grid container spacing={2}>
         {products?.map((p) => (
-          <Grid item xs={12} sm={6} md={3} key={p.id || p.id}>
+          <Grid item xs={12} sm={6} md={3} key={p.id}>
             <Card>
               <CardContent>
-                <Typography variant="h6">{p.name || p.name}</Typography>
+                <Typography variant="h6">{p.name}</Typography>
                 <Typography color="text.secondary">
                   {p.category || p.category}
                 </Typography>
                 <Typography variant="body1">
-                  QAR {p.price?.toFixed ? p.price.toFixed(2) : p.price}
+                            QAR {Number(p.price).toFixed(2)}
                 </Typography>
               </CardContent>
               <CardActions>
-                        <Button size="small" variant="contained" onClick={() => addItem(p)}>
+                        <Button size="small" variant="contained"  fullWidth onClick={() => addItem(p)}>
                             Add to Cart
                         </Button>
               </CardActions>
