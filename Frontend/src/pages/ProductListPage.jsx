@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { useCart } from '../context/CartContext.jsx';
 import apiClient from '../api/client.js';
+import { Link } from 'react-router-dom';  
 
 const API_BASE = 'http://localhost:5261'; // your backend URL/port
 
@@ -48,9 +49,21 @@ const ProductListPage = () => {
    
 
   return (
-    <Box>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
+          {/* Header row */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
       <Typography variant="h4" gutterBottom>Products</Typography>
-
+      {/* ✅ NEW View Cart button */}
+        <Button
+          component={Link}
+          to="/cart"
+          variant="contained"
+          color="success"
+        >
+          View Cart
+        </Button>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
       <TextField
         label="Filter by category"
         size="small"
@@ -58,7 +71,7 @@ const ProductListPage = () => {
         onChange={(e) => setCategory(e.target.value)}
         sx={{ mb: 3 }}
       />
-
+      </Box>
       <Grid container spacing={2}>
         {products?.map((p) => (
           <Grid item xs={12} sm={6} md={3} key={p.id}>
