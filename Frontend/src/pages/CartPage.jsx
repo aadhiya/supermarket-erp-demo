@@ -18,16 +18,17 @@ const CartPage = () => {
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
     const removeItem = (id) => {
-        const updated = cart.filter(item => item.id !== id);
-        setCart(updated);
+        setCart(prev => prev.filter(item => item.id !== id));
     };
 
     const updateQty = (id, delta) => {
-        const updated = cart
-            .map(item =>
-                item.id === id ? { ...item, qty: Math.max(1, item.qty + delta) } : item
-            );
-        setCart(updated);
+        setCart(prev =>
+            prev.map(item =>
+                item.id === id
+                    ? { ...item, qty: Math.max(1, item.qty + delta) }
+                    : item
+            )
+        );
     };
 
     const handleCheckout = () => {
@@ -35,7 +36,7 @@ const CartPage = () => {
         navigate('/checkout');
     };
 
-    if (!cart.length) {
+    if (!cart?.length) {
         return (
             <Box>
                 <Typography variant="h4" gutterBottom>Your Cart</Typography>
@@ -48,7 +49,7 @@ const CartPage = () => {
     }
 
     return (
-        <Box>
+        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
             <Typography variant="h4" gutterBottom>Your Cart</Typography>
             <Divider sx={{ mb: 2 }} />
 
@@ -59,13 +60,14 @@ const CartPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        py: 1,
+                        py: 2,
+                        borderBottom: '1px solid #eee',
                     }}
                 >
-                    <Box>
-                        <Typography variant="subtitle1">{item.name}</Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="subtitle1" sx={{ mb: 0.5 }}>{item.name}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            QAR {item.price.toFixed(2)} × {item.qty}
+                            QAR { Number(item.price).toFixed(2)} × {item.qty}
                         </Typography>
                     </Box>
 
@@ -77,7 +79,7 @@ const CartPage = () => {
                         >
                             −
                         </Button>
-                        <Typography>{item.qty}</Typography>
+                        <Typography sx={{ minWidth: 24, textAlign: 'center' }}>{item.qty}</Typography>
                         <Button
                             variant="outlined"
                             size="small"
@@ -86,7 +88,7 @@ const CartPage = () => {
                             +
                         </Button>
                         <Typography sx={{ width: 90, textAlign: 'right' }}>
-                            QAR {(item.price * item.qty).toFixed(2)}
+                            QAR {(Number(item.price) * item.qty).toFixed(2)}
                         </Typography>
                         <IconButton color="error" onClick={() => removeItem(item.id)}>
                             <DeleteIcon />
