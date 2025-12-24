@@ -14,13 +14,15 @@ import {
   Box,
 } from '@mui/material';
 import { useCart } from '../context/CartContext.jsx';
+import apiClient from '../api/client.js';
 
 const API_BASE = 'http://localhost:5261'; // your backend URL/port
 
+
 const fetchProducts = async (category) => {
-  const res = await axios.get(`${API_BASE}/api/products`, {
-      params: { category: category || undefined },
-  });
+ // const res = await axios.get(`${API_BASE}/api/products`, {
+   //   params: { category: category || undefined },
+    const res = await apiClient.get('/api/products', { params: { category } });
   return res.data;
 };
 
