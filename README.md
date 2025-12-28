@@ -29,7 +29,7 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Swagger UI for backend APIs (products, sales, inventory, POS sale, forecast, chat)
 
-`![Swagger](data/Screenshot-2025-12-24-114100.jpg)`
+`![Swagger](data/Screenshot 2025-12-24 114100.png)`
 
 > Auth section in Swagger showing `/api/Auth/login` example
 
