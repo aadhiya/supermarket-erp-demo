@@ -21,19 +21,20 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Home page (entry point to shopping and cart)
 
-`![Home](data/Screenshot-2025-12-24-121608.jpg)`
+![Home](data/home.png)
 
 > Products page with category filter, search, and **Add to Cart** actions
 
-`![Products](data/Screenshot-2025-12-24-102650.jpg)`
+![Products](data/products.png)
+
 
 > Swagger UI for backend APIs (products, sales, inventory, POS sale, forecast, chat)
 
-`![Swagger](data/Screenshot 2025-12-24 114100.png)`
+![Swagger](data/swagger.png)
 
 > Auth section in Swagger showing `/api/Auth/login` example
 
-`![Auth Swagger](data/Screenshot-2025-12-24-114114.jpg)`
+![Auth Swagger](data/swagger_test.png)
 
 > Raw JSON response from `/api/products`
 
@@ -41,11 +42,11 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Login screen used by the React frontend
 
-`![Login](data/Screenshot-2025-12-24-122000.jpg)`
+![Login](data/login.png)
 
 > Cart page with quantities, line totals, and overall total
 
-`![Cart](data/Screenshot 2025-12-24 122012.png)`
+![Cart](data/cart.png)
 
 ---
 
