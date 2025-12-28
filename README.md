@@ -34,7 +34,7 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Auth section in Swagger showing `/api/Auth/login` example
 
-![Auth Swagger](data/swaggertest.png)
+![Auth Swagger](data/swagger_test.png)
 
 > Raw JSON response from `/api/products`
 
