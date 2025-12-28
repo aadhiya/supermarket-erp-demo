@@ -97,5 +97,26 @@ namespace Backend.Controllers
 
             return Ok(suggestions);
         }
+        // recent sales
+        [HttpGet("recent-sales")]
+        public async Task<IActionResult> GetRecentSales()
+        {
+            var recent = await _context.Sales
+                .OrderByDescending(s => s.Date)
+                .Take(10)
+                .Select(s => new
+                {
+                    s.InvoiceId,
+                    s.ProductCode,
+                    s.Quantity,
+                    s.Total,
+                    s.Date,
+                    ProductName = _context.Products.Where(p => p.Code == s.ProductCode).Select(p => p.Name).FirstOrDefault()
+                })
+                .ToListAsync();
+
+            return Ok(recent);
+        }
+
     }
 }
