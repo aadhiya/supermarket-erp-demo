@@ -38,7 +38,7 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Raw JSON response from `/api/products`
 
-![Products API](data/products_api_backend)
+![Products API](data/products_api_backend.png)
 
 > Login screen used by the React frontend
 
