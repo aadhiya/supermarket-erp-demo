@@ -10,12 +10,28 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, Link } from 'react-router-dom';
-
+import apiClient from '../api/client.js';
 const CartPage = () => {
     const { cart, removeItem, updateQty } = useCart();    
     const navigate = useNavigate();
 
     const total = cart.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
+
+    // ✅ Repeat last order function
+    const repeatLastOrder = async () => {
+        try {
+            const response = await apiClient.post('/api/orders/repeat', {
+                items: cart.map(item => ({
+                    productCode: item.category || item.id,  // Use category or fallback
+                    quantity: item.qty
+                }))
+            });
+            alert(response.data.message || 'Last order repeated!');
+        } catch (err) {
+            alert('Error repeating order');
+        }
+    };
+
     /*
     const removeItem = (id) => {
         setCart(prev => prev.filter(item => item.id !== id));
@@ -50,7 +66,19 @@ const CartPage = () => {
 
     return (
         <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h4" gutterBottom>Your Cart</Typography>
+                {/* ✅ NEW: Repeat Last Order button */}
+                <Button
+                    variant="outlined"
+                    onClick={repeatLastOrder}
+                    startIcon="🔄"
+                    size="small"
+                >
+                    Repeat Last Order
+                </Button>
+            </Box>
+
             <Divider sx={{ mb: 2 }} />
 
             {cart.map(item => (
