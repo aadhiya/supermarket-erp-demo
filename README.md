@@ -21,31 +21,31 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Home page (entry point to shopping and cart)
 
-`![Home](./[Screenshot-2025-12-24-121608.jpg](https://github.com/aadhiya/supermarket-erp-demo/blob/main/data/Screenshot%202025-12-24%20114100.png))`
+`![Home](./data/Screenshot-2025-12-24-121608.jpg)`
 
 > Products page with category filter, search, and **Add to Cart** actions
 
-`![Products](./Screenshot-2025-12-24-102650.jpg)`
+`![Products](./data/Screenshot-2025-12-24-102650.jpg)`
 
 > Swagger UI for backend APIs (products, sales, inventory, POS sale, forecast, chat)
 
-`![Swagger](./Screenshot-2025-12-24-114100.jpg)`
+`![Swagger](./data/Screenshot-2025-12-24-114100.jpg)`
 
 > Auth section in Swagger showing `/api/Auth/login` example
 
-`![Auth Swagger](./Screenshot-2025-12-24-114114.jpg)`
+`![Auth Swagger](./data/Screenshot-2025-12-24-114114.jpg)`
 
 > Raw JSON response from `/api/products`
 
-`![Products API](./Screenshot-2025-12-24-121944.jpg)`
+`![Products API](./data/Screenshot-2025-12-24-121944.jpg)`
 
 > Login screen used by the React frontend
 
-`![Login](./Screenshot-2025-12-24-122000.jpg)`
+`![Login](./data/Screenshot-2025-12-24-122000.jpg)`
 
 > Cart page with quantities, line totals, and overall total
 
-`![Cart](./Screenshot-2025-12-24-122012.jpg)`
+`![Cart](./data/Screenshot 2025-12-24 122012.png)`
 
 ---
 
