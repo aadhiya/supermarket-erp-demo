@@ -21,7 +21,7 @@ A full‑stack supermarket web app showing a realistic **POS + inventory** scena
 
 > Home page (entry point to shopping and cart)
 
-`![Home](./Screenshot-2025-12-24-121608.jpg)`
+`![Home](./[Screenshot-2025-12-24-121608.jpg](https://github.com/aadhiya/supermarket-erp-demo/blob/main/data/Screenshot%202025-12-24%20114100.png))`
 
 > Products page with category filter, search, and **Add to Cart** actions
 
