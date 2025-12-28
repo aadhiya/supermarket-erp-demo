@@ -28,7 +28,8 @@ const fetchProducts = async (category) => {
 };
 
 const ProductListPage = () => {
-  const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('');
+    const [search, setSearch] = useState('');   
     const { addItem } = useCart();
     const { data: products = [], isLoading, error } = useQuery({
     queryKey: ['products', category],
@@ -48,7 +49,7 @@ const ProductListPage = () => {
     }
    
     // ✅ client-side filter by name
-    const filtered = products.filter(p =>
+    const filtered = products.filter((p) =>
         p.name.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -67,15 +68,23 @@ const ProductListPage = () => {
           View Cart
         </Button>
           </Box>
+          {/* Filters */}
           <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-      <TextField
-        label="Filter by category"
-        size="small"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+              <TextField
+                  label="Filter by category"
+                  size="small"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
                   fullWidth
-      />
-      </Box>
+              />
+              <TextField
+                  label="Search products"
+                  size="small"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  fullWidth
+              />
+          </Box>
       <Grid container spacing={2}>
         {products?.map((p) => (
           <Grid item xs={12} sm={6} md={3} key={p.id}>
