@@ -7,6 +7,7 @@ import ProductListPage from './pages/ProductListPage.jsx';
 import CartPage from './pages/CartPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import { useNavigate } from 'react-router-dom';
+import ReorderPage from './pages/ReorderPage.jsx';
 import './App.css';
 
 // ✅ DEFINE HOMEPAGE HERE:
@@ -104,7 +105,8 @@ function App() {
                 <Route path="/" element={<HomePage />} />           {/* ✅ NOW WORKS */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/products" element={<ProductListPage />} />
-                <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+            <Route path="/reorder" element={<ProtectedRoute><ReorderPage /></ProtectedRoute>} /> 
             </Routes>
         
     );
