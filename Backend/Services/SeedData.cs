@@ -85,7 +85,10 @@ public class SeedData
                 ProductCode = productCode,
                 Quantity = qty,                               // ✅ Use declared var
                 Total = total,                                // ✅ Use declared var
-                Branch = record.Branch ?? "Main"
+                Branch = record.Branch ?? "Main",
+                Date = DateTime.ParseExact(record.Date, "M/d/yyyy", CultureInfo.InvariantCulture),        // Parse CSV date
+                InvoiceId = record.InvoiceID,              // Group by original invoice
+                Payment = record.Payment
             });
         }
         if (!_context.Users.Any(u => u.Email == "customer@test.com"))
