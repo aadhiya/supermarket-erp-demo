@@ -15,6 +15,10 @@ const HomePage = () => {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
     const handleLogout = () => {
+        // Clear client-side session data
+        localStorage.removeItem('token');      // if your useAuth doesn't already do this
+        localStorage.removeItem('cart');       // clear cart
+        localStorage.removeItem('user');       // optional, if you store it
         logout();
         navigate('/login');   // or '/' if you prefer
     };
