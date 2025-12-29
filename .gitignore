@@ -7,3 +7,9 @@ dist/
 "Backend/obj/" 
 "Frontend/node_modules/" 
 "Frontend/dist/" 
+.vs/ 
+Backend/bin/ 
+Backend/obj/ 
+supermarket.db 
+supermarket.db-shm 
+supermarket.db-wal 

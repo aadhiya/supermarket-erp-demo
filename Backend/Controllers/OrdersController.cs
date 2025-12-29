@@ -101,22 +101,101 @@ namespace Backend.Controllers
         [HttpGet("recent-sales")]
         public async Task<IActionResult> GetRecentSales()
         {
-            var recent = await _context.Sales
-                .OrderByDescending(s => s.Date)
-                .Take(10)
-                .Select(s => new
-                {
-                    s.InvoiceId,
-                    s.ProductCode,
-                    s.Quantity,
-                    s.Total,
-                    s.Date,
-                    ProductName = _context.Products.Where(p => p.Code == s.ProductCode).Select(p => p.Name).FirstOrDefault()
-                })
-                .ToListAsync();
+            var recent = await (from sale in _context.Sales
+                                join product in _context.Products
+                                on sale.ProductCode equals product.Code into products
+                                from product in products.DefaultIfEmpty()
+                                orderby sale.Date descending
+                                select new
+                                {
+                                    sale.InvoiceId,
+                                    sale.ProductCode,
+                                    sale.Quantity,
+                                    sale.Total,
+                                    sale.Date,
+                                    ProductName = product != null ? product.Name : "Unknown"
+                                })
+                               .Take(10)
+                               .ToListAsync();
 
             return Ok(recent);
         }
 
+        [HttpPost("repeat")]
+        public async Task<IActionResult> RepeatOrder([FromBody] RepeatOrderRequest request)
+        {
+            var newInvoiceId = $"REPEAT-{DateTime.UtcNow:yyyyMMdd-HHmmss}";
+
+            foreach (var item in request.Items)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.Code == item.ProductCode);
+                if (product == null)
+                    return NotFound($"Product {item.ProductCode} not found");
+
+                if (product.Stock < item.Quantity)
+                    return BadRequest($"Low stock for {item.ProductCode}");
+
+                // Create new sale record
+                _context.Sales.Add(new Sale
+                {
+                    ProductCode = item.ProductCode,
+                    Quantity = item.Quantity,
+                    Total = item.Quantity * product.Price,
+                    Branch = "Main",
+                    Date = DateTime.UtcNow,
+                    InvoiceId = newInvoiceId,
+                    Payment = "Card"
+                });
+
+                product.Stock -= item.Quantity;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                message = $"Repeated {request.Items.Count} items! Invoice: {newInvoiceId}",
+                invoiceId = newInvoiceId
+            });
+        }
+        ///checkout endpoint
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Checkout([FromBody] RepeatOrderRequest request)
+        {
+            var newInvoiceId = $"INV-{DateTime.UtcNow:yyyyMMdd-HHmmss}";
+
+            foreach (var item in request.Items)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.Code == item.ProductCode);
+                if (product == null || product.Stock < item.Quantity)
+                    continue; // Skip invalid items
+
+                _context.Sales.Add(new Sale
+                {
+                    ProductCode = item.ProductCode,
+                    Quantity = item.Quantity,
+                    Total = item.Quantity * product.Price,
+                    Branch = "Main",
+                    Date = DateTime.UtcNow,
+                    InvoiceId = newInvoiceId,
+                    Payment = "Card"
+                });
+                product.Stock -= item.Quantity;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { invoiceId = newInvoiceId });
+        }
+
+        // ADD THESE MODELS (at bottom of file, after class closing)
+        public class RepeatOrderRequest
+        {
+            public List<RepeatOrderItem> Items { get; set; } = new();
+        }
+
+        public class RepeatOrderItem
+        {
+            public string ProductCode { get; set; } = "";
+            public int Quantity { get; set; }
+        }
     }
 }

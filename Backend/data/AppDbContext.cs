@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Sale> Sales { get; set; }
     public DbSet<User> Users { get; set; }
+    
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite("Data Source=supermarket.db");
@@ -16,5 +17,11 @@ public class AppDbContext : DbContext
     {
         modelBuilder.Entity<Product>().HasKey(p => p.Id);
         modelBuilder.Entity<Sale>().HasKey(s => s.Id);
+        modelBuilder.Entity<Sale>()
+            .HasOne<Product>()
+            .WithMany()
+            .HasForeignKey(s => s.ProductCode)
+            .HasPrincipalKey(p => p.Code);
+
     }
 }

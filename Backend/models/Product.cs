@@ -12,13 +12,3 @@ public class Product
     public DateTime LastUpdated { get; set; } = DateTime.Now;
 }
 
-public class Sale
-{
-    public int Id { get; set; }
-    public DateTime Date { get; set; } = DateTime.Now;
-    public string ProductCode { get; set; } = "";
-    public int Quantity { get; set; }
-    public decimal Total { get; set; }
-    public string Branch { get; set; } = "Main";
-    public string Payment { get; set; } = "Cash";
-}
