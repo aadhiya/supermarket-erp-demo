@@ -47,10 +47,43 @@ const CartPage = () => {
         );
     };
     */
-    const handleCheckout = () => {
-        // later: call backend /api/orders
-        navigate('/checkout');
+    const handleCheckout = async () => {
+        const token = localStorage.getItem('token');
+
+        if (!token || cart.length === 0) {
+            toast.error('Please login and add items to cart');
+            return;
+        }
+
+        try {
+            // 1️⃣ POST to backend checkout
+            const response = await fetch('http://localhost:5261/api/orders/checkout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    items: cart.map(item => ({
+                        productCode: item.productCode || item.ProductCode,  // handle both casings
+                        quantity: item.quantity || item.Quantity
+                    }))
+                }),
+            });
+
+            if (!response.ok) throw new Error('Checkout failed');
+
+            // 2️⃣ CLEAR CART after success
+            localStorage.removeItem('cart');
+            window.location.reload();  // refresh to show empty cart
+
+            toast.success('Order placed successfully!');
+            navigate('/products');
+        } catch (error) {
+            toast.error('Checkout failed: ' + error.message);
+        }
     };
+
 
     if (!cart?.length) {
         return (
